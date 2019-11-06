@@ -1,0 +1,5 @@
+.chart :global(.gapi-analytics-data-chart-styles-table-td) {
+  white-space: normal;
+  word-break: break-all;
+  max-width: 70%;
+}

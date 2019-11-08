@@ -3,8 +3,7 @@ import React from 'react'
 import Fieldset from 'part:@sanity/components/fieldsets/default'
 import debounceRender from 'react-debounce-render';
 import Spinner from 'part:@sanity/components/loading/spinner'
-import mainConfig from 'config:@sanity/google-analytics-plugin'
-import GoogleDataChart from './GoogleDataChart'
+import mainConfig from 'config:google-analytics-plugin'
 import GoogleMaterialDataChart from './GoogleMaterialDataChart'
 import GoogleProvider from'./GoogleProvider'
 
@@ -31,15 +30,6 @@ const initGoogleAPI = () => {
   }
 }
 
-const useMaterial = config => {
-  if (!config) {
-    return false
-  }
-  if (config.useMaterial) {
-    return true
-  }
-}
-
 class CoreWidget extends React.Component {
 
   componentDidMount() {
@@ -51,12 +41,15 @@ class CoreWidget extends React.Component {
     if (typeof window == 'undefined' || typeof gapi === 'undefined') {
       return <Spinner message="Loading chart" center />
     }
-    const Chart = useMaterial(config) ? GoogleMaterialDataChart : GoogleDataChart
+
+    if (!mainConfig) {
+      return <p>Please add <code>google-analytics-plugin.json</code> to your config folder</p>
+    }
 
     return (
       <GoogleProvider clientId={mainConfig.clientId} onLoggedIn={this.props.onLoggedIn}>
         {
-          children || <Chart {...this.props} views={views || mainConfig.views} />
+          children || <GoogleMaterialDataChart {...this.props} views={views || mainConfig.views} />
         }
       </GoogleProvider>
     )

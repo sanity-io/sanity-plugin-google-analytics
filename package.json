@@ -6,7 +6,6 @@
   "scripts": {
     "build": "babel src -d build --copy-files",
     "build:watch": "npm run build && nodemon --watch src --exec npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "npm run build"
   },
   "author": "Kristoffer Sivertsen",

@@ -5,14 +5,6 @@
   },
   "parts": [
     {
-      "implements": "part:@sanity/base/schema-type",
-      "path": "schema/WidgetType.js"
-    },
-    {
-      "implements": "part:@sanity/base/schema-type",
-      "path": "schema/PublishedTimelineWidget.js"
-    },
-    {
       "name": "part:@sanity/dashboard/widget/google-analytics",
       "implements": "part:@sanity/dashboard/widget",
       "path": "components/DashboardWidget.js"

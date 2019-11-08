@@ -8,7 +8,7 @@ sanity install google-analytics
 
 
 ## How to config
-Add a `google-analytics-plugin.json` in your `config/@sanity` folder. You need to retrive your `client_id` from your Google API, and your view `id` are available inside your Google Analytics settings.
+Add a `google-analytics-plugin.json` in your `config` folder. You need to retrive your `client_id` from your Google API, and your view `id` are available inside your Google Analytics settings.
 
 ```json
 {

@@ -1,0 +1,22 @@
+@import 'part:@sanity/base/theme/variables-style';
+
+.chart {
+  background: var(--component-bg);
+
+  @nest & :global(.google-visualization-table, .google-visualization-table-tr-head) {
+    background: var(--component-bg);
+  }
+
+  @nest & :global(.google-visualization-table .gradient) {
+    background: var(--component-bg);
+  }
+
+  @nest & :global(.google-visualization-table-tr-over) {
+    background-color: var(--selectable-item-color-hover);
+  }
+
+  @nest & :global(.google-visualization-table-tr-sel) {
+    background-color: var(--selected-item-color);
+    color: var(--selected-item-color--inverted);
+  }
+}

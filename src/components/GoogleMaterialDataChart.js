@@ -3,8 +3,9 @@ import React from "react"
 import { render } from "react-dom"
 import PropTypes from 'prop-types'
 import { Chart } from "react-google-charts"
-import mainConfig from 'config:@sanity/google-analytics-plugin'
+import mainConfig from 'config:google-analytics-plugin'
 import Spinner from 'part:@sanity/components/loading/spinner'
+import css from './GoogleMaterialDataChart.css'
 
 function convertTypeToMaterial(chartType) {
   switch (chartType) {
@@ -17,8 +18,7 @@ function convertTypeToMaterial(chartType) {
     case 'TABLE':
       return 'Table'
     case 'PIE':
-      console.warn('Material has problems rendering pie charts')
-      return 'PieChart'
+      return 'Pie'
   }
   return chartType
 }
@@ -69,7 +69,30 @@ export default class GoogleDataChart extends React.Component {
   }
 
   handleSelect = event => {
-    console.log('select', event)
+    const {config} = this.props
+    const {chartWrapper} = event
+    const chart = chartWrapper.getChart()
+    const selection = chart.getSelection()
+    
+
+    if (selection.length === 1) {
+      const [selectedItem] = selection
+      const dataTable = this.state.dataTable
+      const { row, column } = selectedItem
+
+      let cell = undefined
+
+      if (typeof row === 'number' && typeof column === 'number') {
+        cell = dataTable.rows[row].c[column].v
+      } else if (typeof row === 'number' && typeof column !== 'number') {
+        cell = dataTable.rows[row]
+      }
+
+      if (config.onSelect) {
+        config.onSelect(selectedItem, cell, event)
+      }
+      
+    }
   }
 
   render() {
@@ -79,16 +102,20 @@ export default class GoogleDataChart extends React.Component {
       return <Spinner message="Loading" />
     }
 
+    const type = convertTypeToMaterial(config.chart.type || 'Line')
+
+    if (type === 'Pie') {
+      return <div>Pie is not supported yet</div>
+    }
+
     return (
-      <div>
+      <div className={css.chart}>
         <Chart
-          {...this.props}
-          chartType={convertTypeToMaterial(config.chart.type || 'Line')}
+          chartType={type}
           data={dataTable}
           width="100%"
           height="400px"
-          legendToggle
-          options={config.options}
+          options={config.chart}
           mapsApiKey={mainConfig.mapsApiKey}
           chartEvents={[
             {

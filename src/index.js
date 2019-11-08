@@ -1,5 +1,5 @@
-import FormBuilderWidget from './components/FormBuilderWidget'
+import DashboardWidget from './components/DashboardWidget'
 
 export default {
-  FormBuilderWidget
+  DashboardWidget
 }

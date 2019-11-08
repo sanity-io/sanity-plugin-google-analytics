@@ -1,18 +1,23 @@
 {
   "name": "sanity-plugin-google-analytics",
   "version": "0.1.0",
-  "description": "View data from Google Analytics on your Sanity studio",
+  "description": "View data from Google Analytics in your Sanity.io studio",
   "main": "build/index.js",
   "scripts": {
     "build": "babel src -d build --copy-files",
     "build:watch": "npm run build && nodemon --watch src --exec npm run build",
     "prepublish": "npm run build"
   },
-  "author": "Kristoffer Sivertsen",
+  "author": "Sanity.io <hello@sanity.io>",
   "license": "ISC",
+  "keywords": [
+    "analytics",
+    "google-analytics",
+    "sanity",
+    "sanity-plugin"
+  ],
   "dependencies": {
     "@babel/runtime": "^7.6.3",
-    "react": "^16.2.0",
     "react-google-charts": "^3.0.15"
   },
   "devDependencies": {
@@ -31,14 +36,13 @@
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.7.0",
     "nodemon": "^1.19.4",
-    "npm-watch": "^0.6.0",
-    "prettier": "^1.14.2",
-    "react-hot-loader": "4.3.8"
+    "prettier": "^1.14.2"
   },
   "peerDependencies": {
     "@sanity/base": ">= 0.135.x",
     "@sanity/client": ">= 0.135.x",
     "@sanity/components": ">= 0.135.x",
-    "@sanity/core": ">= 0.135.x"
+    "@sanity/core": ">= 0.135.x",
+    "react": "^16.2.0"
   }
 }

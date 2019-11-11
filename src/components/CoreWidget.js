@@ -39,7 +39,7 @@ class CoreWidget extends React.Component {
   render() {
     const {type, level, clientId, views, children, config} = this.props
     if (typeof window == 'undefined' || typeof gapi === 'undefined') {
-      return <Spinner message="Loading chart" center />
+      return <div />
     }
 
     if (!mainConfig) {

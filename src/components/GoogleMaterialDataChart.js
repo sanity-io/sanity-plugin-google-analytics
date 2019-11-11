@@ -99,7 +99,7 @@ export default class GoogleDataChart extends React.Component {
     const {dataTable, config} = this.state
 
     if (!dataTable) {
-      return <Spinner message="Loading" />
+      return <div style={{marginTop: '3.5rem'}}><Spinner message="Loading analytics" center /></div>
     }
 
     const type = convertTypeToMaterial(config.chart.type || 'Line')

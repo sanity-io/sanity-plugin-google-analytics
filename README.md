@@ -8,7 +8,10 @@ sanity install google-analytics
 
 
 ## How to config
-Add a `google-analytics-plugin.json` in your `config` folder. You need to retrive your `client_id` from your Google API, and your view `id` are available inside your Google Analytics settings.
+
+Add a `google-analytics-plugin.json` in your `config` folder.
+You need to retrive your `client_id` from your Google API. [Instructions for setup Google Analytics API](https://github.com/google/google-api-javascript-client/blob/master/docs/start.md#setup)
+Your view `id` are available inside your  Google Analytics settings.
 
 ```json
 {
@@ -20,6 +23,14 @@ Add a `google-analytics-plugin.json` in your `config` folder. You need to retriv
 You have to setup a google API, and all your studio users need to have access to the current Google Analytics View
 
 [Query reference](https://developers.google.com/analytics/devguides/reporting/core/v3/reference#q_summary)
+
+Make a config file, and add the path yo your `sanity.json`
+```json
+{
+    "implements": "part:@sanity/dashboard/config",
+    "path": "./config/dashboard.js"
+}
+```
 
 
 ## Example of Dashboard config

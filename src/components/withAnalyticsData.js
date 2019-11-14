@@ -6,28 +6,22 @@ import mainConfig from 'config:google-analytics-plugin'
 import withAnalyticsAuth from './withAnalyticsAuth'
 import Spinner from 'part:@sanity/components/loading/spinner'
 import GoogleProvider from './GoogleProvider'
-import CoreWidget from "./CoreWidget"
+import CoreWidget from './CoreWidget'
+import Loading from './Loading'
 
 export default function withAnalyticsData(Component, data) {
-  return class extends React.Component { 
+  return class extends React.Component {
+    _interval = undefined
     state = {
-      dataTable: undefined,
+      data: undefined,
       config: undefined,
-      chartIsLoaded: false,
-      apiIsLoaded: false
     }
 
     componentDidMount() {
-      this.loadChart();
-    }
-    componentWillUpdate() {
-      this.loadChart();
+      this._interval = setInterval(this.loadChart, 100)
     }
   
     loadChart = () => {
-      console.log('Try load chart')
-      
-
       const {config} = this.props
       if (
         !config
@@ -40,15 +34,13 @@ export default function withAnalyticsData(Component, data) {
         return false
       }
 
-      
-
-      console.log('### WE GOT CHART ###')
+      clearInterval(this._interval)
   
       const newConfig = {
         ...config,
         query: {
           ...config.query,
-          output: 'dataTable',
+          output: config.query.output || 'json',
           ids: this.props.views || mainConfig.views
         }
       }
@@ -56,12 +48,14 @@ export default function withAnalyticsData(Component, data) {
       const report = new gapi.analytics.report.Data({query: newConfig.query})
   
       report.on('success', res => {
-        if (this.state.dataTable && this.state.isLoaded) {
-          console.log('Already loaded and has data table', this.state.dataTable)
+        
+        if (this.state.data && this.state.isLoaded) {
           return
         }
+        
         this.setState({
-          dataTable: res.dataTable,
+          // data: res.dataTable || res.rows,
+          data: res.rows,
           config: newConfig,
           isLoaded: true
         })
@@ -71,59 +65,37 @@ export default function withAnalyticsData(Component, data) {
     }
 
     handleSelect = event => {
-      console.log('handleSelect')
-      // const {gaConfig} = this.props
-      // const {chartWrapper} = event
-      // const chart = chartWrapper.getChart()
-      // const selection = chart.getSelection()
+      const {gaConfig} = this.props
+      const {chartWrapper} = event
+      const chart = chartWrapper.getChart()
+      const selection = chart.getSelection()
       
-      // if (selection.length === 1) {
-      //   const [selectedItem] = selection
-      //   const dataTable = this.state.dataTable
-      //   const { row, column } = selectedItem
+      if (selection.length === 1) {
+        const [selectedItem] = selection
+        const dataTable = this.state.dataTable
+        const { row, column } = selectedItem
 
-      //   let cell = undefined
+        let cell = undefined
 
-      //   if (typeof row === 'number' && typeof column === 'number') {
-      //     cell = dataTable.rows[row].c[column].v
-      //   } else if (typeof row === 'number' && typeof column !== 'number') {
-      //     cell = dataTable.rows[row]
-      //   }
+        if (typeof row === 'number' && typeof column === 'number') {
+          cell = dataTable.rows[row].c[column].v
+        } else if (typeof row === 'number' && typeof column !== 'number') {
+          cell = dataTable.rows[row]
+        }
 
-      //   if (gaConfig.onSelect) {
-      //     gaConfig.onSelect(selectedItem, cell, event)
-      //   }
-      // }
-    }
-
-    handleOnLoggedIn = () => {
-      console.log('handleLoggedIn withAnalyticsData')
-      // this.loadChart()
-    }
-
-    handleReady = () => {
-      console.log('ready')
-      this.loadChart()
+        if (gaConfig.onSelect) {
+          gaConfig.onSelect(selectedItem, cell, event)
+        }
+      }
     }
 
     render() {
-      console.log('render withAnalyticsData', this.props, this.state)
-
-      if (!mainConfig) {
-        return <p>Please add <code>google-analytics-plugin.json</code> to your config folder</p>
-      }
-      const {dataTable, newConfig} = this.state
+      const {data, newConfig} = this.state
       const {type, level, clientId, views, children, gaConfig} = this.props
 
       return (
         <CoreWidget>
-          <div>With analytics data widget</div>
-          {dataTable && (
-            <Component
-              dataTable={dataTable}
-              onSelect={this.handleSelect}
-            />
-          )}
+          {data ? <Component {...this.props} data={data} onSelect={this.handleSelect} /> : <Loading />}
         </CoreWidget>
       )
     }

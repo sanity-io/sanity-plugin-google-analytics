@@ -4,7 +4,7 @@ import { render } from "react-dom"
 import PropTypes from 'prop-types'
 import { Chart } from "react-google-charts"
 import mainConfig from 'config:google-analytics-plugin'
-import Spinner from 'part:@sanity/components/loading/spinner'
+import Loading from './Loading'
 import css from './GoogleMaterialDataChart.css'
 
 function convertTypeToMaterial(chartType) {
@@ -23,7 +23,7 @@ function convertTypeToMaterial(chartType) {
   return chartType
 }
 
-export default class GoogleDataChart extends React.Component { 
+export default class GoogleMaterialDataChart extends React.Component { 
   state = {
     dataTable: undefined,
     config: undefined,
@@ -31,9 +31,6 @@ export default class GoogleDataChart extends React.Component {
   }
 
   componentDidMount() {
-    this.loadChart();
-  }
-  componentWillUpdate() {
     this.loadChart();
   }
 
@@ -91,7 +88,6 @@ export default class GoogleDataChart extends React.Component {
       if (config.onSelect) {
         config.onSelect(selectedItem, cell, event)
       }
-      
     }
   }
 
@@ -99,7 +95,7 @@ export default class GoogleDataChart extends React.Component {
     const {dataTable, config} = this.state
 
     if (!dataTable) {
-      return <div style={{paddingTop: '15rem', position: 'relative'}}><Spinner message="Loading analytics" center /></div>
+      return <Loading message="Loading chart" />
     }
 
     const type = convertTypeToMaterial(config.chart.type || 'Line')

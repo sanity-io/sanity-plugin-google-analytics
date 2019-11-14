@@ -6,6 +6,7 @@ import Spinner from 'part:@sanity/components/loading/spinner'
 import mainConfig from 'config:google-analytics-plugin'
 import GoogleMaterialDataChart from './GoogleMaterialDataChart'
 import GoogleProvider from'./GoogleProvider'
+import Loading from './Loading'
 
 const initGoogleAPI = () => {
   // Check that the google api is not initialized before
@@ -32,22 +33,39 @@ const initGoogleAPI = () => {
 
 class CoreWidget extends React.Component {
 
+  _interval = undefined
+
+  state = {
+    hasGapi: false
+  }
+
   componentDidMount() {
     initGoogleAPI()
+    this._interval = setInterval(this.init, 100)
+  }
+
+  init = () => {
+    if (typeof window !== 'undefined' && window.gapi) {
+      this.setState({hasGapi: true})
+      clearInterval(this._interval)
+    }
   }
 
   render() {
     const {type, level, clientId, views, children, config} = this.props
-    if (typeof window == 'undefined' || typeof gapi === 'undefined') {
-      return <div>Loading</div>
-    }
+
+    const {hasGapi} = this.state
 
     if (!mainConfig) {
       return <p>Please add <code>google-analytics-plugin.json</code> to your config folder</p>
     }
 
+    if (!hasGapi) {
+      return <Loading />
+    }
+
     return (
-      <GoogleProvider clientId={mainConfig.clientId} onLoggedIn={this.props.onLoggedIn}>
+      <GoogleProvider clientId={mainConfig.clientId}>
         {
           children || <GoogleMaterialDataChart {...this.props} views={views || mainConfig.views} />
         }

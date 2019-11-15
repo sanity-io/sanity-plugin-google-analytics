@@ -28,7 +28,7 @@ Make a config file, and add the path yo your `sanity.json`
 ```json
 {
     "implements": "part:@sanity/dashboard/config",
-    "path": "./config/dashboard.js"
+    "path": "./myDashboard.js"
 }
 ```
 
@@ -88,32 +88,6 @@ export default {
 
 ### Other widget examples
 
-#### Pie
-
-```
-  {
-    name: 'google-analytics',
-    layout: {
-      width: 'medium'
-    },
-    options: {
-      title: 'Pageviews by browser',
-      gaConfig: {
-        reportType: 'ga',
-        query: {
-          dimensions: 'ga:browser',
-          metrics: 'ga:pageViews'
-        },
-        chart: {
-          type: 'PIE',
-          width: '100%',
-          height: '500px'
-        }
-      }
-    }
-  }
-```
-
 #### Table of top bouncing pages
 ```javascript
   {
@@ -143,4 +117,36 @@ export default {
       }
     }
   }
+```
+
+### Make your own with data from `withAnalyticsData`
+
+
+Example of an component
+```javascript
+import withAnalyticsData from "part:@sanity/google-analytics/withAnalyticsData"
+
+class MyComponent extends React.Component {
+  render() {
+    const {data} = this.props
+    return (
+      <pre>{JSON.stringify(data)}</pre>
+    )
+  }
+}
+
+export default withAnalyticsData(MyComponent)
+```
+
+When you use your component, you can specify what data you want.
+```javascript
+  <MyComponent config={{
+    reportType: 'ga',
+    query: {
+      dimensions: 'ga:date',
+      metrics: 'ga:users, ga:sessions, ga:newUsers',
+      'start-date': '365daysAgo',
+      'end-date': 'yesterday'
+    }
+  }} />
 ```

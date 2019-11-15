@@ -1,17 +1,29 @@
 # Sanity Google Analytics Plugin
 
-Dashboard widget for showing Anlytics data in your studio
+Analytics widget and components for showing Google Anlytics data in your studio.
 
 ```
 sanity install google-analytics
 ```
 
-
 ## How to config
 
+You have to setup a google API, and all your studio users need to have access to the current Google Analytics View
+
+### Setup an API
+
+1. Open the API Library in the Google API Console. If prompted, select a project or create a new one.
+2. Find Google Analytics Reporting API and enable it
+3. Open the [Credentials page](https://console.developers.google.com/apis/credentials) in the API Console.
+4. Click Create credentials > OAuth client ID and select the appropriate Application type.
+
+[Detailed instructions for setup Google Analytics API](https://github.com/google/google-api-javascript-client/blob/master/docs/start.md#setup)
+
+Your `view id` are available inside your [Google Analytics](https://analytics.google.com/).
+Go to *admin* → *View settings* to find your `view id`.
+
+### Add config file
 Add a `google-analytics-plugin.json` in your `config` folder.
-You need to retrive your `client_id` from your Google API. [Instructions for setup Google Analytics API](https://github.com/google/google-api-javascript-client/blob/master/docs/start.md#setup)
-Your view `id` are available inside your  Google Analytics settings.
 
 ```json
 {
@@ -20,9 +32,10 @@ Your view `id` are available inside your  Google Analytics settings.
 }
 ```
 
-You have to setup a google API, and all your studio users need to have access to the current Google Analytics View
+## Dashboard widgets
 
-[Query reference](https://developers.google.com/analytics/devguides/reporting/core/v3/reference#q_summary)
+If you don't have dashboard, install it with `sanity install @sanity/dashboard`. 
+[Dashboard docs](https://www.sanity.io/docs/dashboard)
 
 Make a config file, and add the path yo your `sanity.json`
 ```json
@@ -32,8 +45,10 @@ Make a config file, and add the path yo your `sanity.json`
 }
 ```
 
+#### Making queries
+To make a query, try the [Query explorer](https://ga-dev-tools.appspot.com/query-explorer/) or find parameters in the [Query reference](https://developers.google.com/analytics/devguides/reporting/core/v3/reference#q_summary)
 
-## Example of Dashboard config
+### Example of Dashboard config
 
 ```javascript
 export default {
@@ -86,8 +101,6 @@ export default {
     }
 ```
 
-### Other widget examples
-
 #### Table of top bouncing pages
 ```javascript
 {
@@ -119,10 +132,12 @@ export default {
 }
 ```
 
-### Make your own with data from `withAnalyticsData`
+## Make your own component
 
+### `withAnalyticsData`
 
-Example of an component
+By wrapping your component in `withAnalyticsData` a `data`-prop will be available in your plugin.
+
 ```javascript
 import withAnalyticsData from "part:@sanity/google-analytics/withAnalyticsData"
 

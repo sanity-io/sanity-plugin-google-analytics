@@ -27,8 +27,8 @@ You have to setup a google API, and all your studio users need to have access to
 Make a config file, and add the path yo your `sanity.json`
 ```json
 {
-    "implements": "part:@sanity/dashboard/config",
-    "path": "./myDashboard.js"
+  "implements": "part:@sanity/dashboard/config",
+  "path": "./myDashboardConfig.js"
 }
 ```
 
@@ -90,33 +90,33 @@ export default {
 
 #### Table of top bouncing pages
 ```javascript
-  {
-    name: 'google-analytics',
-    layout: {
-      width: 'medium'
-    },
-    options: {
-      title: 'Top 10 bouncing blog posts',
-      gaConfig: {
-        reportType: 'ga',
-        query: {
-          dimensions: 'ga:pagePath',
-          'max-results': 10,
-          metrics: 'ga:bounceRate, ga:bounces, ga:pageViews',
-          sort: '-ga:bounceRate',
-          'start-date': '30daysAgo',
-          'end-date': 'yesterday',
-          filters: 'ga:pagePath=~^/blog;ga:bounces>50'
-        },
-        chart: {
-          type: 'TABLE',
-          options: {
-            width: '100%',
-          }
+{
+  name: 'google-analytics',
+  layout: {
+    width: 'medium'
+  },
+  options: {
+    title: 'Top 10 bouncing blog posts',
+    gaConfig: {
+      reportType: 'ga',
+      query: {
+        dimensions: 'ga:pagePath',
+        'max-results': 10,
+        metrics: 'ga:bounceRate, ga:bounces, ga:pageViews',
+        sort: '-ga:bounceRate',
+        'start-date': '30daysAgo',
+        'end-date': 'yesterday',
+        filters: 'ga:pagePath=~^/blog;ga:bounces>50'
+      },
+      chart: {
+        type: 'TABLE',
+        options: {
+          width: '100%',
         }
       }
     }
   }
+}
 ```
 
 ### Make your own with data from `withAnalyticsData`
@@ -140,13 +140,40 @@ export default withAnalyticsData(MyComponent)
 
 When you use your component, you can specify what data you want.
 ```javascript
-  <MyComponent config={{
+<MyComponent config={{
+  reportType: 'ga',
+  query: {
+    dimensions: 'ga:date',
+    metrics: 'ga:users, ga:sessions, ga:newUsers',
+    'start-date': '30daysAgo',
+    'end-date': 'yesterday'
+  }
+}} />
+```
+
+### Use the analytics widget in your own components
+```javascript
+import AnalyticsWidget from 'part:@sanity/google-analytics/widget'
+<AnalyticsWidget
+  config={{
+    onSelect: (selectedItem, cell, chart) => {
+      // Do something with the selected data
+      console.log('select', selectedItem, cell, chart)
+    },
     reportType: 'ga',
     query: {
       dimensions: 'ga:date',
-      metrics: 'ga:users, ga:sessions, ga:newUsers',
-      'start-date': '365daysAgo',
+      metrics: 'ga:users, ga:sessions',
+      'start-date': '30daysAgo',
       'end-date': 'yesterday'
+    },
+    chart: {
+      axes: {x: { 0: { label: 'Date' }}},
+      type: 'LINE',
+      series: {
+        0: {title: 'Users', color: '#145eda'},
+        1: {title: 'Sessions', color: '#16ae3c'}
+      }
     }
-  }} />
+}} />
 ```

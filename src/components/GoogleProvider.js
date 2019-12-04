@@ -4,8 +4,11 @@ import PropTypes from 'prop-types'
 
 class GoogleProvider extends React.Component {
   state = {
-    ready: false
+    ready: false,
+    loggedIn: false
   }
+
+  authButtonNode = React.createRef()
 
   componentDidMount() {
     this.init()
@@ -20,7 +23,7 @@ class GoogleProvider extends React.Component {
       gapi.analytics.auth &&
         gapi.analytics.auth.authorize({
           ...authObj,
-          container: this.authButtonNode
+          container: this.authButtonNode.current
         })
     }
 
@@ -28,7 +31,7 @@ class GoogleProvider extends React.Component {
       const authResponse = gapi.analytics.auth.getAuthResponse();
       if (!authResponse) {
         gapi.analytics.auth.on("success", response => {
-          this.setState({ready: true})
+          this.setState({ready: true, loggedIn: true})
         })
       } else {
         this.setState({ready: true})
@@ -38,9 +41,19 @@ class GoogleProvider extends React.Component {
   }
 
   render() {
+    const {loggedIn} = this.state
+
+    const hiddenStyles = {
+      opacity: 0,
+      height: 0,
+      overflow: 'hidden'
+    }
+
     return (
       <div className="sanity-plugin-google-analytics--provider">
-        {this.props.clientId && <div className="login" ref={node => (this.authButtonNode = node)} />}
+        {this.props.clientId && (
+          <div style={loggedIn ? hiddenStyles : {}} ref={this.authButtonNode} />
+        )}
         {this.state.ready && this.props.children}
       </div>
     )

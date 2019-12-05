@@ -6,6 +6,7 @@ import { Chart } from "react-google-charts"
 import mainConfig from 'config:google-analytics-plugin'
 import Loading from './Loading'
 import css from './GoogleMaterialDataChart.css'
+import {withRouterHOC} from 'part:@sanity/base/router'
 
 function convertTypeToMaterial(chartType) {
   switch (chartType) {
@@ -23,7 +24,7 @@ function convertTypeToMaterial(chartType) {
   return chartType
 }
 
-export default class GoogleMaterialDataChart extends React.Component { 
+class GoogleMaterialDataChart extends React.Component { 
   state = {
     dataTable: undefined,
     config: undefined,
@@ -86,7 +87,7 @@ export default class GoogleMaterialDataChart extends React.Component {
       }
 
       if (config.onSelect) {
-        config.onSelect(selectedItem, cell, event)
+        config.onSelect(selectedItem, cell, event, this.props.router)
       }
     }
   }
@@ -124,3 +125,5 @@ export default class GoogleMaterialDataChart extends React.Component {
     )
   }
 }
+
+export default withRouterHOC(GoogleMaterialDataChart)

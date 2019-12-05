@@ -169,11 +169,19 @@ When you use your component, you can specify what data you want.
 ### Use the analytics widget in your own components
 ```javascript
 import AnalyticsWidget from 'part:@sanity/google-analytics/widget'
+import sanityClient from 'part:@sanity/base/client'
 <AnalyticsWidget
   config={{
-    onSelect: (selectedItem, cell, chart) => {
+    onSelect: (selectedItem, cell, chart, router) => {
       // Do something with the selected data
-      console.log('select', selectedItem, cell, chart)
+      console.log('select', selectedItem, cell, chart, router)
+      // Example of finding the id based on slug and navigate to it
+      sanityClient.fetch(`*[_type == 'post' && slug.current == $path][0]`, {path}).then(res => {
+        router.navigateIntent('edit', {
+          type: 'post',
+          id: res._id
+        })
+      })
     },
     reportType: 'ga',
     query: {
@@ -192,3 +200,51 @@ import AnalyticsWidget from 'part:@sanity/google-analytics/widget'
     }
 }} />
 ```
+
+### Example of a table with top bouncing blog posts and navigate to them on click
+```javascript
+{
+    name: 'google-analytics',
+    layout: {
+      width: 'medium'
+    },
+    options: {
+      title: 'Top bouncing posts',
+      gaConfig: {
+        reportType: 'ga',
+        onSelect: (selectedItem, cell, chart, router) => {
+          try {
+            // Find url
+            const path = cell.c[0].v.split('/blog/')[1]
+            // Find the ID
+            sanityClient.fetch(`*[_type == 'post' && slug.current == $path][0]`, {path}).then(res => {
+              // Navigate to post in sanity studio
+              router.navigateIntent('edit', {
+                type: 'post',
+                id: res._id
+              })
+            })
+            
+          } catch {
+            console.error('Could not find post')
+          }
+        },
+        query: {
+          dimensions: 'ga:pagePath',
+          'max-results': 10,
+          metrics: 'ga:bounceRate, ga:bounces, ga:pageViews',
+          sort: '-ga:bounceRate',
+          'start-date': '30daysAgo',
+          'end-date': 'yesterday',
+          filters: 'ga:pagePath=~^/blog;ga:bounces>50'
+        },
+        chart: {
+          type: 'TABLE',
+          options: {
+            width: '100%',
+          }
+        }
+      }
+    }
+  }
+  ```

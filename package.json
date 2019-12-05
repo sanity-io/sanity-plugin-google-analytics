@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-google-analytics",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "View data from Google Analytics in your Sanity.io studio",
   "main": "build/index.js",
   "scripts": {

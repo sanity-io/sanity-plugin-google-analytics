@@ -3,3 +3,7 @@
   word-break: break-all;
   max-width: 70%;
 }
+
+.chart :global(.google-visualization-table-table) {
+  width: 100%;
+}

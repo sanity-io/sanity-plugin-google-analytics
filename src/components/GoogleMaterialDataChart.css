@@ -19,4 +19,28 @@
     background-color: var(--selected-item-color);
     color: var(--selected-item-color--inverted);
   }
+
+  @nest & :global(.google-visualization-table-tr-head > th:first-child) {
+    text-align: left;
+  }
+}
+
+.chartWithOnSelect {
+  /* Left blank */
+}
+
+.chartWithoutOnSelect {
+  @nest & :global(.google-visualization-table-tr-sel) {
+    background-color: unset !important;
+    color: unset !important;
+  }
+
+  @nest & :global(.google-visualization-table-tr-over) {
+    background-color: inherit;
+    color: inherit;
+  }
+
+  @nest & :global(.google-visualization-table-tr-odd.google-visualization-table-tr-over) {
+    background-color: #fafafa;
+  }
 }

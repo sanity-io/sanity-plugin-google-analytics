@@ -114,11 +114,10 @@ class GoogleMaterialDataChart extends React.Component {
           }
         })
       }
-      
     }
 
     return (
-      <div className={css.chart}>
+      <div className={`${css.chart} ${config.onSelect ? css.chartWithOnSelect : css.chartWithoutOnSelect}`}>
         <Chart
           chartType={type}
           data={dataTable}

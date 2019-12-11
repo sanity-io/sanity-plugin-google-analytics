@@ -105,6 +105,18 @@ class GoogleMaterialDataChart extends React.Component {
       return <div>Pie is not supported yet</div>
     }
 
+    // Add custom labels from config to the dataTable
+    if (type === 'Table' || type === 'TABLE') {
+      if (config.chart && config.chart.labels) {
+        Object.keys(config.chart.labels).map(i => {
+          if (dataTable.cols[i] && config.chart.labels[i]) {
+            dataTable.cols[i].label = config.chart.labels[i]
+          }
+        })
+      }
+      
+    }
+
     return (
       <div className={css.chart}>
         <Chart

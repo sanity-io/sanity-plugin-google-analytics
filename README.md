@@ -123,6 +123,12 @@ export default {
       },
       chart: {
         type: 'TABLE',
+        labels: {
+          0: 'Page path',
+          1: 'Bounce rate',
+          2: 'Bounces',
+          3: 'Page views'
+        },
         options: {
           width: '100%',
         }

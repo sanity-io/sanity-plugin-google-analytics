@@ -2,48 +2,92 @@
   "name": "sanity-plugin-google-analytics",
   "version": "0.2.6",
   "description": "View data from Google Analytics in your Sanity.io studio",
-  "main": "build/index.js",
-  "scripts": {
-    "build": "babel src -d build --copy-files",
-    "build:watch": "npm run build && nodemon --watch src --exec npm run build",
-    "prepublish": "npm run build"
-  },
-  "author": "Sanity.io <hello@sanity.io>",
-  "license": "ISC",
   "keywords": [
     "analytics",
     "google-analytics",
     "sanity",
     "sanity-plugin"
   ],
+  "homepage": "https://github.com/sanity-io/sanity-plugin-google-analytics#readme",
+  "bugs": {
+    "url": "https://github.com/sanity-io/sanity-plugin-google-analytics/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:sanity-io/sanity-plugin-google-analytics.git"
+  },
+  "license": "ISC",
+  "author": "Sanity.io <hello@sanity.io>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "source": "./src/index.ts",
+      "require": "./lib/index.cjs",
+      "node": {
+        "import": "./lib/index.cjs.js",
+        "require": "./lib/index.cjs"
+      },
+      "import": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.js",
+  "source": "./src/index.ts",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "src",
+    "lib",
+    "sanity.json",
+    "v2-incompatible.js"
+  ],
+  "scripts": {
+    "build": "run-s clean && plugin-kit verify-package --silent && pkg-utils build --strict && pkg-utils --strict",
+    "clean": "rimraf lib",
+    "link-watch": "plugin-kit link-watch",
+    "prepublishOnly": "run-s build",
+    "watch": "pkg-utils watch --strict"
+  },
   "dependencies": {
-    "@babel/runtime": "^7.6.3",
+    "@sanity/incompatible-plugin": "^1",
     "react-debounce-render": "^5.0.0",
-    "react-google-charts": "^3.0.15"
+    "react-google-charts": "^4.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.3",
-    "@babel/core": "^7.6.3",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-transform-runtime": "^7.6.2",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
-    "babel-eslint": "^9.0.0",
-    "babel-preset-react": "^6.24.1",
-    "eslint": "^5.6.0",
-    "eslint-config-prettier": "^3.0.1",
-    "eslint-config-sanity": "^4.0.2",
-    "eslint-plugin-import": "^2.9.0",
-    "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "^7.7.0",
+    "@sanity/dashboard": "^3.1.4",
+    "@sanity/pkg-utils": "^2.3.3",
+    "@sanity/plugin-kit": "^3.1.7",
+    "@types/styled-components": "^5.1.26",
+    "eslint": "^8.36.0",
+    "eslint-config-prettier": "^8.7.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-config-sanity": "^6.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "nodemon": "^1.19.4",
-    "prettier": "^1.14.2"
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.8.4",
+    "prettier-plugin-packagejson": "^2.4.3",
+    "react": "^18.2.0",
+    "rimraf": "^5.0.1",
+    "rollup-plugin-postcss-modules": "^2.1.1",
+    "sanity": "^3.6.0",
+    "styled-components": "^5.3.11",
+    "typescript": "~5.0.2",
+    "typescript-plugin-css-modules": "^5.0.1"
   },
   "peerDependencies": {
-    "@sanity/base": ">= 0.135.x",
-    "@sanity/client": ">= 0.135.x",
-    "@sanity/components": ">= 0.135.x",
-    "@sanity/core": ">= 0.135.x",
-    "react": "^16.2.0"
-  }
+    "react": "^18",
+    "sanity": "^3",
+    "styled-components": "^5.2"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-google-analytics"
 }

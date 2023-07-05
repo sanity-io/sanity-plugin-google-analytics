@@ -1,29 +1,8 @@
 {
-  "paths": {
-    "source": "./src",
-    "compiled": "./build"
-  },
   "parts": [
     {
-      "name": "part:@sanity/dashboard/widget/google-analytics",
-      "implements": "part:@sanity/dashboard/widget",
-      "path": "components/DashboardWidget.js"
-    },
-    {
-      "name": "part:@sanity/google-analytics/widget",
-      "description": "Simple widget showing analytics data"
-    },
-    {
-      "implements": "part:@sanity/google-analytics/widget",
-      "path": "components/CoreWidget.js"
-    },
-    {
-      "name": "part:@sanity/google-analytics/withAnalyticsData",
-      "description": "HOC component providing data from Google Analytics to make your own visualisation"
-    },
-    {
-      "implements": "part:@sanity/google-analytics/withAnalyticsData",
-      "path": "components/withAnalyticsData.js"
+      "implements": "part:@sanity/base/sanity-root",
+      "path": "./v2-incompatible.js"
     }
   ]
 }

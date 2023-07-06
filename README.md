@@ -20,9 +20,10 @@ You have to setup a google API, and all your studio users need to have access to
 [Detailed instructions for setup Google Analytics API](https://github.com/google/google-api-javascript-client/blob/master/docs/start.md#setup)
 
 Your `view id` are available inside your [Google Analytics](https://analytics.google.com/).
-Go to *admin* → *View settings* to find your `view id`.
+Go to _admin_ → _View settings_ to find your `view id`.
 
 ### Add config file
+
 Add a `google-analytics-plugin.json` in your `config` folder.
 
 ```json
@@ -34,10 +35,11 @@ Add a `google-analytics-plugin.json` in your `config` folder.
 
 ## Dashboard widgets
 
-If you don't have dashboard, install it with `sanity install @sanity/dashboard`. 
+If you don't have dashboard, install it with `sanity install @sanity/dashboard`.
 [Dashboard docs](https://www.sanity.io/docs/dashboard)
 
 Make a config file, and add the path yo your `sanity.json`
+
 ```json
 {
   "implements": "part:@sanity/dashboard/config",
@@ -46,6 +48,7 @@ Make a config file, and add the path yo your `sanity.json`
 ```
 
 #### Making queries
+
 To make a query, try the [Query explorer](https://ga-dev-tools.appspot.com/query-explorer/) or find parameters in the [Query reference](https://developers.google.com/analytics/devguides/reporting/core/v3/reference#q_summary)
 
 ### Example of Dashboard config
@@ -102,6 +105,7 @@ export default {
 ```
 
 #### Table of top bouncing pages
+
 ```javascript
 {
   name: 'google-analytics',
@@ -145,14 +149,12 @@ export default {
 By wrapping your component in `withAnalyticsData` a `data`-prop will be available in your plugin.
 
 ```javascript
-import withAnalyticsData from "part:@sanity/google-analytics/withAnalyticsData"
+import withAnalyticsData from 'part:@sanity/google-analytics/withAnalyticsData'
 
 class MyComponent extends React.Component {
   render() {
     const {data} = this.props
-    return (
-      <pre>{JSON.stringify(data)}</pre>
-    )
+    return <pre>{JSON.stringify(data)}</pre>
   }
 }
 
@@ -160,32 +162,36 @@ export default withAnalyticsData(MyComponent)
 ```
 
 When you use your component, you can specify what data you want.
+
 ```javascript
-<MyComponent config={{
-  reportType: 'ga',
-  query: {
-    dimensions: 'ga:date',
-    metrics: 'ga:users, ga:sessions, ga:newUsers',
-    'start-date': '30daysAgo',
-    'end-date': 'yesterday'
-  }
-}} />
+<MyComponent
+  config={{
+    reportType: 'ga',
+    query: {
+      dimensions: 'ga:date',
+      metrics: 'ga:users, ga:sessions, ga:newUsers',
+      'start-date': '30daysAgo',
+      'end-date': 'yesterday',
+    },
+  }}
+/>
 ```
 
 ### Use the analytics widget in your own components
+
 ```javascript
 import AnalyticsWidget from 'part:@sanity/google-analytics/widget'
 import sanityClient from 'part:@sanity/base/client'
-<AnalyticsWidget
+;<AnalyticsWidget
   config={{
     onSelect: (selectedItem, cell, chart, router) => {
       // Do something with the selected data
       console.log('select', selectedItem, cell, chart, router)
       // Example of finding the id based on slug and navigate to it
-      sanityClient.fetch(`*[_type == 'post' && slug.current == $path][0]`, {path}).then(res => {
+      sanityClient.fetch(`*[_type == 'post' && slug.current == $path][0]`, {path}).then((res) => {
         router.navigateIntent('edit', {
           type: 'post',
-          id: res._id
+          id: res._id,
         })
       })
     },
@@ -194,20 +200,22 @@ import sanityClient from 'part:@sanity/base/client'
       dimensions: 'ga:date',
       metrics: 'ga:users, ga:sessions',
       'start-date': '30daysAgo',
-      'end-date': 'yesterday'
+      'end-date': 'yesterday',
     },
     chart: {
-      axes: {x: { 0: { label: 'Date' }}},
+      axes: {x: {0: {label: 'Date'}}},
       type: 'LINE',
       series: {
         0: {title: 'Users', color: '#145eda'},
-        1: {title: 'Sessions', color: '#16ae3c'}
-      }
-    }
-}} />
+        1: {title: 'Sessions', color: '#16ae3c'},
+      },
+    },
+  }}
+/>
 ```
 
 ### Example of a table with top bouncing blog posts and navigate to them on click
+
 ```javascript
 {
     name: 'google-analytics',
@@ -230,7 +238,7 @@ import sanityClient from 'part:@sanity/base/client'
                 id: res._id
               })
             })
-            
+
           } catch {
             console.error('Could not find post')
           }
@@ -253,4 +261,4 @@ import sanityClient from 'part:@sanity/base/client'
       }
     }
   }
-  ```
+```

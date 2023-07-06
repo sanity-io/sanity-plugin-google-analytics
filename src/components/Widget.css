@@ -1,0 +1,5 @@
+.chart {
+  composes: chart from './shared.css';
+  padding: var(--medium-padding);
+  font-size: 12px;
+}

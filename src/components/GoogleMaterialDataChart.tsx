@@ -68,6 +68,24 @@ export default function GoogleMaterialDataChart(props: GoogleMaterialDataChartPr
     return <Loading message="Loading data" />
   }
 
+  // TODO: Coerce returned data into a generic datatable format for the google chart.
+  // this only currently works for tables
+  const headers = [
+    ...data.dimensionHeaders.map((h:any) => h.name),
+    ...data.metricHeaders.map((h:any) => h.name)
+  ]
+  const values = data.rows.map((row:any) => {
+    return [
+      ...row.dimensionValues.map((v:any) => v.value),
+      ...row.metricValues.map((v:any) => v.value)
+    ]
+  })
+
+  const dataTable = [
+    headers,
+    ...values
+  ]
+
   const {type, ...chartOptions} = chart
 
   if (type === 'PieChart') {
@@ -89,7 +107,7 @@ export default function GoogleMaterialDataChart(props: GoogleMaterialDataChartPr
     <div className={`${css.chart} ${onSelect ? css.chartWithOnSelect : css.chartWithoutOnSelect}`}>
       <Chart
         chartType={type}
-        data={data}
+        data={dataTable}
         width="100%"
         height="400px"
         options={chartOptions}

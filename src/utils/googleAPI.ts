@@ -1,81 +1,62 @@
+import loadScript from 'load-script'
+
 export type GoogleAPIContainer = Record<string, any>
 declare global {
   interface Window {
     gapi: GoogleAPIContainer
+    google: GoogleAPIContainer
   }
 }
 
-export function initGoogleAPI() {
-  return new Promise<GoogleAPIContainer>((resolve, reject) => {
-    if (typeof window === 'undefined') {
-      reject(new Error('global window not found'))
-      return
-    }
+const SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
 
-    if (window.gapi) {
-      resolve(window.gapi)
-      return
-    }
+export function loadGoogleAPI() {
+  return Promise.all([
+    new Promise<GoogleAPIContainer>((resolve, reject) => {
+      if (window.google) {
+        return resolve(window.google)
+      }
 
-    window.gapi = {}
+      loadScript(`https://accounts.google.com/gsi/client`, (err: any) => err ? reject(err) : resolve(window.google))
+    }),
+    new Promise<GoogleAPIContainer>((resolve, reject) => {
+      if (window.gapi) {
+        resolve(window.gapi)
+      }
 
-    const gapiScript = document.createElement('script')
-    gapiScript.addEventListener('load', () => resolve(window.gapi))
+      loadScript(`https://apis.google.com/js/api.js`, (err: any) => {
+        if (err) {
+          reject(err)
+          return
+        }
 
-    const firstJSScript = document.getElementsByTagName('script')[0]
-    gapiScript.src = 'https://apis.google.com/js/platform.js'
-    firstJSScript.parentNode!.insertBefore(gapiScript, firstJSScript)
-  })
-}
-
-export function loadGoogleAnalytics(gapi: GoogleAPIContainer) {
-  return new Promise<GoogleAPIContainer>((resolve, reject) => {
-    if (!gapi) {
-      reject(new Error('gapi not found'))
-      return
-    }
-
-    gapi.analytics = {
-      q: [],
-      ready(cb: any) {
-        this.q.push(cb)
-      },
-    }
-    // load the analytics portion of the google API and resolve the promise when ready
-    gapi.analytics.ready(() => resolve(gapi))
-    gapi.load('analytics')
-  })
-}
-
-export function authGoogleAnalytics(
-  gapi: GoogleAPIContainer,
-  clientId: string,
-  authButtonNode: React.RefObject<HTMLDivElement>
-) {
-  return new Promise<GoogleAPIContainer>((resolve, reject) => {
-    if (!gapi?.analytics) {
-      reject(new Error('gapi not found or gapi.analytics not loaded'))
-      return
-    } else if (!clientId) {
-      reject(new Error('clientId not found'))
-      return
-    } else if (!authButtonNode) {
-      reject(new Error('authButtonNode not found'))
-      return
-    }
-
-    const authResponse = gapi.analytics.auth.getAuthResponse()
-    if (authResponse) {
-      resolve(gapi)
-      return
-    }
-
-    gapi.analytics.auth.on('success', () => resolve(gapi))
-    gapi.analytics.auth.on('error', (result: any) => reject(result.error))
-    gapi.analytics.auth.authorize({
-      clientid: clientId,
-      container: authButtonNode.current,
+        window.gapi.load('client', () => {
+          Promise.all([
+            window.gapi.client.load(
+              "https://analyticsreporting.googleapis.com/$discovery/rest?version=v4"
+            ),
+            window.gapi.client.load(
+              "https://analyticsdata.googleapis.com/$discovery/rest"
+            ),
+          ]).then(() => resolve(window.gapi))
+            .catch(err => reject(err))
+        })
+      })
     })
-  })
+  ])
 }
 
+export function authGoogleAPI(googleAccounts: GoogleAPIContainer, gapiClient: GoogleAPIContainer, clientId: string) {
+  return new Promise<any>((resolve, _) => {
+    const client = googleAccounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: SCOPES.join(' '),
+      prompt: '',
+      callback: (response:any) => {
+        gapiClient.setToken(response)
+        resolve(response)
+      }
+    })
+    client.requestAccessToken()
+  })
+}

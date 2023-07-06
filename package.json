@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "@sanity/incompatible-plugin": "^1",
+    "load-script": "^2.0.0",
     "react-debounce-render": "^5.0.0",
     "react-google-charts": "^4.0.0"
   },

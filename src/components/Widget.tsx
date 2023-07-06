@@ -9,9 +9,7 @@ import {
 import GoogleMaterialDataChart, {GoogleMaterialDataChartProps} from './GoogleMaterialDataChart'
 import css from './Widget.css'
 
-export interface GAConfig extends GoogleAnalyticsClientConfig, GoogleMaterialDataChartProps {
-  views: string
-}
+export interface GAConfig extends GoogleAnalyticsClientConfig, GoogleMaterialDataChartProps {}
 
 export interface WidgetProps {
   title: string
@@ -20,14 +18,10 @@ export interface WidgetProps {
 
 export default function Widget(props: WidgetProps) {
   const {title, gaConfig} = props
-  const providerProps = (({clientId, views, query}) => ({
+  const providerProps = (({clientId, propertyId, query}) => ({
     clientId,
-    query: {
-      // set defaults for ids and output fields to what the widget expects
-      ids: views,
-      output: 'dataTable',
-      ...query,
-    },
+    propertyId,
+    query,
   }))(gaConfig)
   const chartProps = (({mapsApiKey, chart, onSelect}) => ({
     mapsApiKey,

@@ -1,11 +1,7 @@
-import React, {createContext, ReactNode, useContext, useEffect, useRef, useState} from 'react'
+import React, {createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react'
 
-import {
-  authGoogleAnalytics,
-  GoogleAPIContainer,
-  initGoogleAPI,
-  loadGoogleAnalytics,
-} from '../utils/googleAPI'
+
+import { loadGoogleAPI, authGoogleAPI, GoogleAPIContainer } from '../utils/googleAPI'
 
 const hiddenStyles = {
   opacity: 0,
@@ -20,6 +16,7 @@ interface GoogleAnalyticsReportData {
 
 export interface GoogleAnalyticsClientConfig {
   clientId: string
+  propertyId: string
   query: any
 }
 
@@ -40,10 +37,12 @@ export function useGoogleAnalyticsReportData() {
 
 export function GoogleAnalyticsReportProvider({
   clientId,
+  propertyId,
   query,
   children,
 }: GoogleAnalyticsClientConfig & {children?: ReactNode | ReactNode[]}) {
-  const [gapi, setGapi] = useState<GoogleAPIContainer | undefined>()
+  const [gapiClient, setGapiClient] = useState<GoogleAPIContainer | undefined>()
+  const [googleAccounts, setGoogleAccounts] = useState<GoogleAPIContainer | undefined>()
   const [ready, setReady] = useState(false)
   const [loggedIn, setLoggedIn] = useState(false)
   const [data, setData] = useState<any>(undefined)
@@ -52,43 +51,45 @@ export function GoogleAnalyticsReportProvider({
   const authButtonNode = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    initGoogleAPI()
-      .then(loadGoogleAnalytics)
-      .then((newGapi) => setGapi(newGapi))
+    loadGoogleAPI()
+      .then(([google, gapi]) => {
+        setGoogleAccounts(google.accounts)
+        setGapiClient(gapi.client)
+      })
   }, [])
 
-  useEffect(() => {
-    if (!gapi || loggedIn) {
+  const loginHandler = useCallback(() => {
+    if (!googleAccounts || !gapiClient || !clientId) {
       return
     }
 
-    authGoogleAnalytics(gapi, clientId, authButtonNode).then(() => {
-      setLoggedIn(true)
-      setReady(true)
-    })
-  }, [gapi, clientId, loggedIn, ready])
+    authGoogleAPI(googleAccounts, gapiClient, clientId)
+      .then(() => {
+        setReady(true)
+        setLoggedIn(true)
+      })
+  },[googleAccounts, gapiClient, clientId])
 
   useEffect(() => {
-    if (!gapi || !ready || isLoaded) {
+    if (!gapiClient || !ready || !query) {
       return
     }
 
-    const report = new gapi.analytics.report.Data({query})
-    report.on('succes', (res: any) => {
-      if (isLoaded) {
-        return
-      }
-
-      setData(res.dataTable)
-      setIsLoaded(true)
-    })
-    report.execute()
-  }, [gapi, ready, isLoaded, query])
+    gapiClient.analyticsdata.properties
+      .runReport({property: `properties/${propertyId}`, resource: query})
+      .then((response: any) => {
+        setData(response.result)
+        setIsLoaded(true)
+      })
+      .catch((err: any) => {
+        console.error(err)
+      })
+  }, [gapiClient, ready, query])
 
   return (
     <GoogleAnalyticsReportContext.Provider value={{data, isLoaded}}>
       <div className="sanity-plugin-google-analytics--provider">
-        {clientId && <div style={loggedIn ? hiddenStyles : {}} ref={authButtonNode} />}
+        {clientId && (<div style={loggedIn ? hiddenStyles : {}} onClick={loginHandler}>Authorize with Google</div>)}
         {ready && children}
       </div>
     </GoogleAnalyticsReportContext.Provider>
